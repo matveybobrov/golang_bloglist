@@ -3,6 +3,7 @@ package handlers
 import (
 	"bloglist/db"
 	"bloglist/models"
+	"bloglist/validators"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -10,7 +11,7 @@ import (
 	"strconv"
 )
 
-type Blog models.Blog
+type Blog = models.Blog
 
 func GetAllBlogs(res http.ResponseWriter, req *http.Request) {
 	blogs := []Blog{}
@@ -60,16 +61,9 @@ func CreateOneBlog(res http.ResponseWriter, req *http.Request) {
 	blog := Blog{}
 	json.NewDecoder(req.Body).Decode(&blog)
 
-	if blog.Title == "" {
-		http.Error(res, "Title must be provided", 400)
-		return
-	}
-	if blog.Author == "" {
-		http.Error(res, "Author must be provided", 400)
-		return
-	}
-	if blog.Url == "" {
-		http.Error(res, "Url must be provided", 400)
+	msg, ok := validators.ValidateBlog(blog)
+	if !ok {
+		http.Error(res, msg, 400)
 		return
 	}
 
@@ -111,16 +105,9 @@ func UpdateOneBlog(res http.ResponseWriter, req *http.Request) {
 	blog := Blog{}
 	json.NewDecoder(req.Body).Decode(&blog)
 
-	if blog.Title == "" {
-		http.Error(res, "Title must be provided", 400)
-		return
-	}
-	if blog.Author == "" {
-		http.Error(res, "Author must be provided", 400)
-		return
-	}
-	if blog.Url == "" {
-		http.Error(res, "Url must be provided", 400)
+	msg, ok := validators.ValidateBlog(blog)
+	if !ok {
+		http.Error(res, msg, 400)
 		return
 	}
 
