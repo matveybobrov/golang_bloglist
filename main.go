@@ -3,20 +3,18 @@ package main
 import (
 	"bloglist/db"
 	"bloglist/handlers"
+	"log"
 
-	"fmt"
 	"net/http"
-	"os"
 )
 
 func init() {
-	fmt.Println("Connecting to database")
+	log.Println("Connecting to database...")
 	err := db.Init()
 	if err != nil {
-		fmt.Println("Failed connecting to database")
-		os.Exit(1)
+		log.Fatal("Failed connecting to database\n", err.Error())
 	}
-	fmt.Println("Connected to database")
+	log.Println("Connected to database")
 }
 
 func main() {
@@ -25,6 +23,6 @@ func main() {
 	http.HandleFunc("POST /api/blogs", handlers.CreateOneBlog)
 	http.HandleFunc("DELETE /api/blogs/{id}", handlers.UpdateOneBlog)
 
-	fmt.Println("Server is running on port 3000")
+	log.Println("Server is running on port 3000")
 	http.ListenAndServe(":3000", nil)
 }

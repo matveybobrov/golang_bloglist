@@ -14,8 +14,13 @@ func CreateDatabase() (*sql.DB, error) {
 	godotenv.Load()
 
 	dbURL := os.Getenv("DATABASE_URL")
+	// somehow doesn't return an error if url in incorrect
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
+		return nil, err
+	}
+	// will return an error if url is incorrect
+	if err = db.Ping(); err != nil {
 		return nil, err
 	}
 
