@@ -3,8 +3,8 @@ package main
 import (
 	"bloglist/db"
 	"bloglist/handlers"
-	"log"
 
+	"log"
 	"net/http"
 )
 
@@ -17,6 +17,9 @@ func init() {
 	log.Println("Connected to database")
 }
 
+// TODO: make centrilized error handler
+// TODO: make authorization middleware
+// TODO: add users
 func main() {
 	http.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
 	http.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)

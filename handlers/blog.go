@@ -14,21 +14,10 @@ import (
 type Blog = models.Blog
 
 func GetAllBlogs(res http.ResponseWriter, req *http.Request) {
-	blogs := []Blog{}
-	rows, err := db.DB.Query("SELECT * FROM blogs")
+	blogs, err := db.GetAllBlogs()
 	if err != nil {
 		http.Error(res, err.Error(), 500)
 		return
-	}
-
-	for rows.Next() {
-		blog := Blog{}
-		err := rows.Scan(&blog.Id, &blog.Title, &blog.Author, &blog.Url, &blog.Likes)
-		if err != nil {
-			http.Error(res, err.Error(), 500)
-			return
-		}
-		blogs = append(blogs, blog)
 	}
 
 	json.NewEncoder(res).Encode(blogs)
@@ -41,9 +30,7 @@ func GetOneBlog(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	blog := Blog{}
-	row := db.DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
-	err = row.Scan(&blog.Id, &blog.Author, &blog.Url, &blog.Title, &blog.Likes)
+	blog, err := db.GetOneBlog(id)
 	if err == sql.ErrNoRows {
 		message := fmt.Sprintf("Blog with id %v was not found", id)
 		http.Error(res, message, 404)
@@ -67,9 +54,7 @@ func CreateOneBlog(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	savedBlog := Blog{}
-	row := db.DB.QueryRow("INSERT INTO blogs (title, author, url) VALUES ($1, $2, $3) RETURNING *", blog.Title, blog.Author, blog.Url)
-	err := row.Scan(&savedBlog.Id, &savedBlog.Title, &savedBlog.Author, &savedBlog.Url, &savedBlog.Likes)
+	savedBlog, err := db.CreateOneBlog(blog)
 	if err != nil {
 		http.Error(res, err.Error(), 500)
 		return
@@ -77,7 +62,6 @@ func CreateOneBlog(res http.ResponseWriter, req *http.Request) {
 
 	res.WriteHeader(201)
 	json.NewEncoder(res).Encode(savedBlog)
-
 }
 
 func DeleteOneBlog(res http.ResponseWriter, req *http.Request) {
@@ -87,11 +71,12 @@ func DeleteOneBlog(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	_, err = db.DB.Exec("DELETE FROM blogs WHERE id=$1", id)
+	err = db.DeleteOneBlog(id)
 	if err != nil {
 		http.Error(res, err.Error(), 500)
 		return
 	}
+
 	res.WriteHeader(204)
 }
 
@@ -111,9 +96,7 @@ func UpdateOneBlog(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	updatedBlog := Blog{}
-	row := db.DB.QueryRow("UPDATE blogs SET title=$1, author=$2, url=$3 RETURNING *", blog.Title, blog.Author, blog.Url)
-	err = row.Scan(&updatedBlog.Id, &updatedBlog.Title, &updatedBlog.Author, &updatedBlog.Url, &updatedBlog.Likes)
+	updatedBlog, err := db.UpdateOneBlog(blog, id)
 	if err == sql.ErrNoRows {
 		message := fmt.Sprintf("Blog with id %v was not found", id)
 		http.Error(res, message, 404)
