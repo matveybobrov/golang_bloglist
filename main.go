@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bloglist/db"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -20,32 +20,20 @@ type Blog struct {
 	Likes  int    `json:"likes"`
 }
 
-var DB *sql.DB
-
 func init() {
-	godotenv.Load()
-
-	// DATABASE CONNECTION
-	dbURL, exists := os.LookupEnv("DATABASE_URL")
-	if !exists {
-		fmt.Println("No database url provided")
-		os.Exit(1)
-	}
-	fmt.Println("Connecting to the database...")
-	db, err := sql.Open("postgres", dbURL)
+	fmt.Println("Connecting to database")
+	err := db.Init()
 	if err != nil {
 		fmt.Println("Failed connecting to database")
-		panic(err)
+		os.Exit(1)
 	}
-
 	fmt.Println("Connected to database")
-	DB = db
 }
 
 func main() {
 	http.HandleFunc("GET /api/blogs", func(res http.ResponseWriter, req *http.Request) {
 		blogs := []Blog{}
-		rows, err := DB.Query("SELECT * FROM blogs")
+		rows, err := db.DB.Query("SELECT * FROM blogs")
 		if err != nil {
 			http.Error(res, err.Error(), 500)
 			return
@@ -72,7 +60,7 @@ func main() {
 		}
 
 		blog := Blog{}
-		row := DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
+		row := db.DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
 		err = row.Scan(&blog.Id, &blog.Author, &blog.Url, &blog.Title, &blog.Likes)
 		if err == sql.ErrNoRows {
 			message := fmt.Sprintf("Person with id %v was not found", id)
@@ -104,7 +92,7 @@ func main() {
 		}
 
 		savedBlog := Blog{}
-		row := DB.QueryRow("INSERT INTO blogs (title, author, url) VALUES ($1, $2, $3) RETURNING *", blog.Title, blog.Author, blog.Url)
+		row := db.DB.QueryRow("INSERT INTO blogs (title, author, url) VALUES ($1, $2, $3) RETURNING *", blog.Title, blog.Author, blog.Url)
 		err := row.Scan(&savedBlog.Id, &savedBlog.Title, &savedBlog.Author, &savedBlog.Url, &savedBlog.Likes)
 		if err != nil {
 			http.Error(res, err.Error(), 500)
@@ -122,7 +110,7 @@ func main() {
 			return
 		}
 
-		_, err = DB.Exec("DELETE FROM blogs WHERE id=$1", id)
+		_, err = db.DB.Exec("DELETE FROM blogs WHERE id=$1", id)
 		if err != nil {
 			http.Error(res, err.Error(), 500)
 			return
