@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bloglist/db"
+	"bloglist/models"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -9,13 +10,7 @@ import (
 	"strconv"
 )
 
-type Blog struct {
-	Id     int    `json:"id"`
-	Title  string `json:"title"`
-	Author string `json:"author"`
-	Url    string `json:"url"`
-	Likes  int    `json:"likes"`
-}
+type Blog models.Blog
 
 func GetAllBlogs(res http.ResponseWriter, req *http.Request) {
 	blogs := []Blog{}
