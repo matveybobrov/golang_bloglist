@@ -3,6 +3,7 @@ package main
 import (
 	"bloglist/db"
 	"bloglist/handlers"
+	"bloglist/middlewares"
 
 	"log"
 	"net/http"
@@ -21,12 +22,18 @@ func init() {
 // TODO: make authorization middleware
 // TODO: add users
 func main() {
-	http.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
-	http.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)
-	http.HandleFunc("POST /api/blogs", handlers.CreateOneBlog)
-	http.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)
-	http.HandleFunc("PUT /api/blogs/{id}", handlers.UpdateOneBlog)
+	Logger := middlewares.Logger
+
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
+	mux.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)
+	mux.HandleFunc("POST /api/blogs", handlers.CreateOneBlog)
+	mux.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)
+	mux.HandleFunc("PUT /api/blogs/{id}", handlers.UpdateOneBlog)
+
+	server := Logger(mux)
 
 	log.Println("Server is running on port 3000")
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":3000", server)
 }
