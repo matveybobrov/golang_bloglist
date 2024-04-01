@@ -32,6 +32,7 @@ func main() {
 	mux.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)
 	mux.HandleFunc("PUT /api/blogs/{id}", handlers.UpdateOneBlog)
 
+	mux.HandleFunc("GET /api/users", handlers.GetAllUsers)
 	mux.HandleFunc("POST /api/users", handlers.CreateUser)
 
 	server := Logger(mux)

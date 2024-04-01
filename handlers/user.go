@@ -11,6 +11,16 @@ import (
 
 type User = models.User
 
+func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := db.GetAllUsers()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	json.NewEncoder(w).Encode(users)
+}
+
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	user := User{}
 	json.NewDecoder(r.Body).Decode(&user)
