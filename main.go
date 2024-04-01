@@ -32,6 +32,8 @@ func main() {
 	mux.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)
 	mux.HandleFunc("PUT /api/blogs/{id}", handlers.UpdateOneBlog)
 
+	mux.HandleFunc("POST /api/users", handlers.CreateUser)
+
 	server := Logger(mux)
 
 	log.Println("Server is running on port 3000")
