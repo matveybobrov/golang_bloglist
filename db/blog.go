@@ -56,7 +56,7 @@ func DeleteOneBlog(id int) error {
 
 func UpdateOneBlog(blog Blog, id int) (Blog, error) {
 	updatedBlog := Blog{}
-	row := DB.QueryRow("UPDATE blogs SET title=$1, author=$2, url=$3 RETURNING *", blog.Title, blog.Author, blog.Url)
+	row := DB.QueryRow("UPDATE blogs SET title=$2, author=$3, url=$4, likes=$5 WHERE id=$1 RETURNING *", blog.Id, blog.Title, blog.Author, blog.Url, blog.Likes)
 	err := row.Scan(&updatedBlog.Id, &updatedBlog.Title, &updatedBlog.Author, &updatedBlog.Url, &updatedBlog.Likes)
 	if err != nil {
 		return updatedBlog, err
