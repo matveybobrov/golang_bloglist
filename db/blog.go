@@ -26,7 +26,7 @@ func GetAllBlogs() ([]Blog, error) {
 	return blogs, nil
 }
 
-func GetOneBlog(id int) (Blog, error) {
+func GetBlogById(id int) (Blog, error) {
 	blog := Blog{}
 	row := DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
 	err := row.Scan(&blog.Id, &blog.Author, &blog.Url, &blog.Title, &blog.Likes)
@@ -39,7 +39,7 @@ func GetOneBlog(id int) (Blog, error) {
 	return blog, nil
 }
 
-func CreateOneBlog(blog Blog) (Blog, error) {
+func InsertBlog(blog Blog) (Blog, error) {
 	savedBlog := Blog{}
 	row := DB.QueryRow("INSERT INTO blogs (title, author, url) VALUES ($1, $2, $3) RETURNING *", blog.Title, blog.Author, blog.Url)
 	err := row.Scan(&savedBlog.Id, &savedBlog.Title, &savedBlog.Author, &savedBlog.Url, &savedBlog.Likes)
@@ -49,12 +49,12 @@ func CreateOneBlog(blog Blog) (Blog, error) {
 	return savedBlog, nil
 }
 
-func DeleteOneBlog(id int) error {
+func DeleteBlogById(id int) error {
 	_, err := DB.Exec("DELETE FROM blogs WHERE id=$1", id)
 	return err
 }
 
-func UpdateOneBlog(blog Blog, id int) (Blog, error) {
+func UpdateBlogById(blog Blog, id int) (Blog, error) {
 	updatedBlog := Blog{}
 	row := DB.QueryRow("UPDATE blogs SET title=$2, author=$3, url=$4, likes=$5 WHERE id=$1 RETURNING *", blog.Id, blog.Title, blog.Author, blog.Url, blog.Likes)
 	err := row.Scan(&updatedBlog.Id, &updatedBlog.Title, &updatedBlog.Author, &updatedBlog.Url, &updatedBlog.Likes)

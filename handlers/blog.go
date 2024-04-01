@@ -30,7 +30,7 @@ func GetOneBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	blog, err := db.GetOneBlog(id)
+	blog, err := db.GetBlogById(id)
 	if err == sql.ErrNoRows {
 		message := fmt.Sprintf("Blog with id %v was not found", id)
 		http.Error(w, message, 404)
@@ -54,7 +54,7 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	savedBlog, err := db.CreateOneBlog(blog)
+	savedBlog, err := db.InsertBlog(blog)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -71,7 +71,7 @@ func DeleteOneBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.DeleteOneBlog(id)
+	err = db.DeleteBlogById(id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -96,7 +96,7 @@ func UpdateOneBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updatedBlog, err := db.UpdateOneBlog(blog, id)
+	updatedBlog, err := db.UpdateBlogById(blog, id)
 	if err == sql.ErrNoRows {
 		message := fmt.Sprintf("Blog with id %v was not found", id)
 		http.Error(w, message, 404)
