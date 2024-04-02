@@ -55,6 +55,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		User:  savedUser,
 		Token: token,
 	}
+
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(response)
 }

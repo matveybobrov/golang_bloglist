@@ -24,8 +24,25 @@ func SignToken(user User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       user.Id,
 		"username": user.Username,
+		"name":     user.Name,
 	})
 	secret := os.Getenv("TOKEN_SECRET")
 	tokenString, err := token.SignedString([]byte(secret))
 	return tokenString, err
+}
+
+func ParseToken(token string) (User, error) {
+	user := User{}
+	secret := os.Getenv("TOKEN_SECRET")
+
+	parsedToken, err := jwt.ParseWithClaims(token, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	claims, _ := parsedToken.Claims.(jwt.MapClaims)
+	user.Id = int(claims["id"].(float64))
+	user.Username = claims["username"].(string)
+	user.Name = claims["name"].(string)
+
+	return user, err
 }
