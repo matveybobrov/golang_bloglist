@@ -1,12 +1,13 @@
 -- You can use dbdiagram.io to create tables
 
 CREATE TABLE IF NOT EXISTS blogs (
-  id SERIAL UNIQUE,
+  id SERIAL PRIMARY KEY,
   author TEXT,
   url TEXT NOT NULL,
   title TEXT NOT NULL,
-  likes INT DEFAULT 0
-  --user_id INT FOREIGN KEY
+  likes INTEGER DEFAULT 0,
+  -- Define one-to-many relationship between user and blogs
+  user_id INTEGER REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS "users" (
@@ -15,6 +16,3 @@ CREATE TABLE IF NOT EXISTS "users" (
   name TEXT,
   password TEXT
 );
-
--- Define one-to-many relationship between user and blogs
-ALTER TABLE blogs ADD user_id INTEGER REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL;

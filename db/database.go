@@ -4,15 +4,12 @@ import (
 	"database/sql"
 	"os"
 
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
 func CreateDatabase() (*sql.DB, error) {
-	godotenv.Load()
-
 	dbURL := os.Getenv("DATABASE_URL")
 	// somehow doesn't return an error if url is incorrect
 	db, err := sql.Open("postgres", dbURL)

@@ -7,9 +7,13 @@ import (
 
 	"log"
 	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func init() {
+	godotenv.Load()
+
 	log.Println("Connecting to database...")
 	err := db.Init()
 	if err != nil {
@@ -20,7 +24,7 @@ func init() {
 
 // TODO: make centrilized error handler
 // TODO: make authorization middleware
-// TODO: add users
+// TODO: generate swagger docs
 func main() {
 	Logger := middlewares.Logger
 

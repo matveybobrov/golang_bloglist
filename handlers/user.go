@@ -10,6 +10,7 @@ import (
 )
 
 type User = models.User
+type UserWithToken = models.UserWithToken
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := db.GetAllUsers()
@@ -38,12 +39,22 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user.Password = hash
 
-	savedBlog, err := db.InsertUser(user)
+	savedUser, err := db.InsertUser(user)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
+	token, err := helpers.SignToken(savedUser)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	response := UserWithToken{
+		User:  savedUser,
+		Token: token,
+	}
 	w.WriteHeader(201)
-	json.NewEncoder(w).Encode(savedBlog)
+	json.NewEncoder(w).Encode(response)
 }
