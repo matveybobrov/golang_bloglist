@@ -21,12 +21,14 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func SignToken(user User) (string, error) {
+	// create token with some data (map)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       user.Id,
 		"username": user.Username,
 		"name":     user.Name,
 	})
 	secret := os.Getenv("TOKEN_SECRET")
+	// sign token with secret
 	tokenString, err := token.SignedString([]byte(secret))
 	return tokenString, err
 }
@@ -38,11 +40,14 @@ func ParseToken(token string) (User, error) {
 	parsedToken, err := jwt.ParseWithClaims(token, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
+	if err != nil {
+		return user, err
+	}
 
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
 	user.Id = int(claims["id"].(float64))
 	user.Username = claims["username"].(string)
 	user.Name = claims["name"].(string)
 
-	return user, err
+	return user, nil
 }

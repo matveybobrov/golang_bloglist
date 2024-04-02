@@ -4,6 +4,20 @@ import "bloglist/models"
 
 type User = models.User
 
+func GetUserById(id int) (User, error) {
+	user := User{}
+	row := DB.QueryRow("SELECT * FROM users WHERE id=$1", id)
+	err := row.Scan(&user.Id, &user.Username, &user.Name, &user.Password)
+	return user, err
+}
+
+func GetUserByUsername(username string) (User, error) {
+	user := User{}
+	row := DB.QueryRow("SELECT * FROM users WHERE username=$1", username)
+	err := row.Scan(&user.Id, &user.Username, &user.Name, &user.Password)
+	return user, err
+}
+
 func GetAllUsers() ([]User, error) {
 	users := []User{}
 	rows, err := DB.Query("SELECT id, username, name FROM users")
@@ -27,8 +41,5 @@ func InsertUser(user User) (User, error) {
 	savedUser := User{}
 	row := DB.QueryRow("INSERT INTO users (username, name, password) VALUES ($1, $2, $3) RETURNING id, username, name", user.Username, user.Name, user.Password)
 	err := row.Scan(&savedUser.Id, &savedUser.Username, &savedUser.Name)
-	if err != nil {
-		return savedUser, err
-	}
-	return savedUser, nil
+	return savedUser, err
 }

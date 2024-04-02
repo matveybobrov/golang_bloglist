@@ -22,7 +22,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(users)
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	user := User{}
 	json.NewDecoder(r.Body).Decode(&user)
 
@@ -57,5 +57,50 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(201)
+	json.NewEncoder(w).Encode(response)
+}
+
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+	/*
+		tokenString := r.Header.Get("Authorization")
+		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
+			http.Error(w, "Missing authorization header", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString = tokenString[len("Bearer "):]
+		user, err := helpers.ParseToken(tokenString)
+		if err != nil {
+			http.Error(w, "Invalid token", http.StatusUnauthorized)
+			return
+		}
+	*/
+	user := User{}
+	json.NewDecoder(r.Body).Decode(&user)
+
+	foundUser, err := db.GetUserByUsername(user.Username)
+	if err != nil {
+		http.Error(w, "User not found", http.StatusNotFound)
+		return
+	}
+
+	ok := helpers.CheckPasswordHash(user.Password, foundUser.Password)
+	if !ok {
+		http.Error(w, "Incorrect password or username", http.StatusUnauthorized)
+		return
+	}
+
+	token, err := helpers.SignToken(user)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	foundUser.Password = ""
+	response := UserWithToken{
+		User:  foundUser,
+		Token: token,
+	}
+
 	json.NewEncoder(w).Encode(response)
 }
