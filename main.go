@@ -23,6 +23,8 @@ func init() {
 	log.Println("Connected to database")
 }
 
+// TODO: consider sqlx
+// TODO: work with queries
 // TODO: make centrilized error handler
 // TODO: generate swagger docs
 func main() {

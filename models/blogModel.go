@@ -1,12 +1,13 @@
 package models
 
 type Blog struct {
-	Id      int    `json:"id"`
-	Title   string `json:"title"`
-	Author  string `json:"author"`
-	Url     string `json:"url"`
-	Likes   int    `json:"likes"`
-	User_id int    `json:"-"`
+	Id     int    `json:"id" db:"id"`
+	Title  string `json:"title" db:"title"`
+	Author string `json:"author" db:"author"`
+	Url    string `json:"url" db:"url"`
+	Likes  int    `json:"likes" db:"likes"`
+	// exclude this field completely from json because of user population
+	User_id int `json:"-" db:"user_id"`
 }
 
 type BlogWithUser struct {
