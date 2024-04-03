@@ -46,7 +46,6 @@ func GetOneBlog(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(blog)
 }
 
-// TODO: link author from token to created blog
 func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 	blog := Blog{}
 	json.NewDecoder(r.Body).Decode(&blog)
@@ -70,11 +69,27 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(savedBlog)
 }
 
-// TODO: make it possible only by its creator verified by token
 func DeleteOneBlog(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 0 {
 		http.Error(w, "Malformatted id", 400)
+		return
+	}
+
+	foundBlog, err := db.GetBlogById(id)
+	if err == sql.ErrNoRows {
+		message := fmt.Sprintf("Blog with id %v was not found", id)
+		http.Error(w, message, 404)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	user := r.Context().Value("User").(User)
+	if user.Id != foundBlog.User_id {
+		http.Error(w, "Not the creator of the blog", http.StatusForbidden)
 		return
 	}
 
@@ -87,7 +102,6 @@ func DeleteOneBlog(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(204)
 }
 
-// TODO: make it possible only by its creator verified by token
 func UpdateOneBlog(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 0 {
@@ -101,6 +115,23 @@ func UpdateOneBlog(w http.ResponseWriter, r *http.Request) {
 	msg, ok := validators.ValidateBlog(blog)
 	if !ok {
 		http.Error(w, msg, 400)
+		return
+	}
+
+	foundBlog, err := db.GetBlogById(id)
+	if err == sql.ErrNoRows {
+		message := fmt.Sprintf("Blog with id %v was not found", id)
+		http.Error(w, message, 404)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	user := r.Context().Value("User").(User)
+	if user.Id != foundBlog.User_id {
+		http.Error(w, "Not the creator of the blog", http.StatusForbidden)
 		return
 	}
 

@@ -23,8 +23,7 @@ func init() {
 	log.Println("Connected to database")
 }
 
-// TODO: make username unique
-// TODO: make creating blogs with token and make a user assigned by token
+// TODO: return user with blog
 // TODO: make centrilized error handler
 // TODO: generate swagger docs
 func main() {
@@ -36,8 +35,8 @@ func main() {
 	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
 	mux.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)
 	mux.HandleFunc("POST /api/blogs", UserExtractor(handlers.CreateOneBlog))
-	mux.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)
-	mux.HandleFunc("PUT /api/blogs/{id}", handlers.UpdateOneBlog)
+	mux.HandleFunc("DELETE /api/blogs/{id}", UserExtractor(handlers.DeleteOneBlog))
+	mux.HandleFunc("PUT /api/blogs/{id}", UserExtractor(handlers.UpdateOneBlog))
 
 	mux.HandleFunc("GET /api/users", handlers.GetAllUsers)
 	mux.HandleFunc("POST /api/register", handlers.RegisterUser)

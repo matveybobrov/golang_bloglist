@@ -2,7 +2,6 @@ package db
 
 import (
 	"bloglist/models"
-	"database/sql"
 )
 
 type Blog = models.Blog
@@ -44,9 +43,6 @@ func GetBlogById(id int) (Blog, error) {
 		&blog.Likes,
 		&blog.User_id,
 	)
-	if err == sql.ErrNoRows {
-		return blog, err
-	}
 	if err != nil {
 		return blog, err
 	}
@@ -82,8 +78,8 @@ func DeleteBlogById(id int) error {
 
 func UpdateBlogById(blog Blog, id int) (Blog, error) {
 	updatedBlog := Blog{}
-	row := DB.QueryRow("UPDATE blogs SET title=$2, author=$3, url=$4, likes=$5 WHERE id=$1 RETURNING *", blog.Id, blog.Title, blog.Author, blog.Url, blog.Likes)
-	err := row.Scan(&updatedBlog.Id, &updatedBlog.Title, &updatedBlog.Author, &updatedBlog.Url, &updatedBlog.Likes)
+	row := DB.QueryRow("UPDATE blogs SET title=$2, author=$3, url=$4, likes=$5 WHERE id=$1 RETURNING *", id, blog.Title, blog.Author, blog.Url, blog.Likes)
+	err := row.Scan(&updatedBlog.Id, &updatedBlog.Title, &updatedBlog.Author, &updatedBlog.Url, &updatedBlog.Likes, &updatedBlog.User_id)
 	if err != nil {
 		return updatedBlog, err
 	}
