@@ -57,8 +57,8 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: take from token
-	blog.User_id = 3
+	user := r.Context().Value("User").(User)
+	blog.User_id = user.Id
 
 	savedBlog, err := db.InsertBlog(blog)
 	if err != nil {

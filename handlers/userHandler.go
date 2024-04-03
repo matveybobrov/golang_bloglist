@@ -6,6 +6,7 @@ import (
 	"bloglist/models"
 	"bloglist/validators"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -41,6 +42,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	savedUser, err := db.InsertUser(user)
 	if err != nil {
+		// TODO: handle unique error properly
 		http.Error(w, err.Error(), 500)
 		return
 	}
@@ -70,6 +72,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(user.Password, foundUser.Password)
 	ok := helpers.CheckPasswordHash(user.Password, foundUser.Password)
 	if !ok {
 		http.Error(w, "Incorrect password or username", http.StatusUnauthorized)

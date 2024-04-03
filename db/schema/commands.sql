@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS blogs (
 
 CREATE TABLE IF NOT EXISTS "users" (
   id SERIAL PRIMARY KEY,
-  username TEXT,
-  name TEXT,
-  password TEXT
+  name TEXT NOT NULL,
+  password TEXT NOT NULL
+  username TEXT UNIQUE NOT NULL,
 );

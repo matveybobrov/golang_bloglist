@@ -11,6 +11,7 @@ import (
 type User = models.User
 
 func HashPassword(password string) (string, error) {
+	// TODO: maybe move cost to .env
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 4)
 	return string(bytes), err
 }

@@ -14,7 +14,7 @@ func GetUserById(id int) (User, error) {
 func GetUserByUsername(username string) (User, error) {
 	user := User{}
 	row := DB.QueryRow("SELECT * FROM users WHERE username=$1", username)
-	err := row.Scan(&user.Id, &user.Username, &user.Name, &user.Password)
+	err := row.Scan(&user.Id, &user.Name, &user.Password, &user.Username)
 	return user, err
 }
 
