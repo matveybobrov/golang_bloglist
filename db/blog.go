@@ -42,8 +42,7 @@ func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 	}
 
 	for rows.Next() {
-		blog := Blog{}
-		user := User{}
+		blog := BlogWithUser{}
 		err := rows.Scan(
 			&blog.Id,
 			&blog.Title,
@@ -52,19 +51,16 @@ func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 			&blog.Likes,
 			&blog.User_id,
 
-			&user.Id,
-			&user.Name,
-			&user.Password,
-			&user.Username,
+			&blog.User.Id,
+			&blog.User.Name,
+			&blog.User.Password,
+			&blog.User.Username,
 		)
 		if err != nil {
 			return nil, err
 		}
-		user.Password = ""
-		blogs = append(blogs, BlogWithUser{
-			Blog: blog,
-			User: user,
-		})
+		blog.User.Password = ""
+		blogs = append(blogs, blog)
 	}
 
 	return blogs, nil
