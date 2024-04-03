@@ -40,6 +40,7 @@ func GetOneBlogWithUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	blog.User.Password = ""
 
 	json.NewEncoder(w).Encode(blog)
 }

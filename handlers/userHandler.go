@@ -70,6 +70,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	savedUser.Password = ""
 
 	token, err := helpers.SignToken(savedUser)
 	if err != nil {

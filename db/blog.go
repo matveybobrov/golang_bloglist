@@ -11,7 +11,8 @@ func GetAllBlogs() ([]Blog, error) {
 	blogs := []Blog{}
 
 	rows, err := DB.Query(`
-		SELECT  *
+		SELECT
+			id, title, author, url, likes, user_id
     FROM blogs
 	`)
 	if err != nil {
@@ -42,7 +43,8 @@ func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 	blogs := []BlogWithUser{}
 
 	rows, err := DB.Query(`
-		SELECT  *
+		SELECT
+			blogs.id, title, author, url, likes, user_id, users.id, name, username, password
     FROM blogs
     JOIN users
       ON blogs.user_id = users.id
@@ -63,8 +65,8 @@ func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 
 			&blog.User.Id,
 			&blog.User.Name,
-			&blog.User.Password,
 			&blog.User.Username,
+			&blog.User.Password,
 		)
 		if err != nil {
 			return nil, err
@@ -80,16 +82,18 @@ func GetBlogById(id int) (Blog, error) {
 	blog := Blog{}
 
 	row := DB.QueryRow(`
-		SELECT  *
+		SELECT
+			id, title, author, url, likes, user_id
     FROM blogs
-    WHERE id = $1 
+    WHERE
+			id = $1 
 	`, id)
 
 	err := row.Scan(
 		&blog.Id,
+		&blog.Title,
 		&blog.Author,
 		&blog.Url,
-		&blog.Title,
 		&blog.Likes,
 		&blog.User_id,
 	)
@@ -103,27 +107,28 @@ func GetBlogWithUserById(id int) (BlogWithUser, error) {
 	blog := BlogWithUser{}
 
 	row := DB.QueryRow(`
-		SELECT  *
+		SELECT
+			blogs.id, title, author, url, likes, user_id, users.id, name, username, password
     FROM blogs
     JOIN users
       ON blogs.user_id = users.id
-    WHERE blogs.id = $1
+    WHERE
+			blogs.id = $1
 	`, id)
 
 	err := row.Scan(
 		&blog.Id,
+		&blog.Title,
 		&blog.Author,
 		&blog.Url,
-		&blog.Title,
 		&blog.Likes,
 		&blog.User_id,
 
 		&blog.User.Id,
 		&blog.User.Name,
-		&blog.User.Password,
 		&blog.User.Username,
+		&blog.User.Password,
 	)
-	blog.User.Password = ""
 	if err != nil {
 		return blog, err
 	}
@@ -135,10 +140,11 @@ func InsertBlog(blog Blog) (Blog, error) {
 
 	row := DB.QueryRow(`
 		INSERT INTO blogs
-		(title, author, url, user_id)
+			(title, author, url, user_id)
 		VALUES
-		($1, $2, $3, $4)
-		RETURNING *
+			($1, $2, $3, $4)
+		RETURNING
+			id, title, author, url, likes, user_id
 	`, blog.Title, blog.Author, blog.Url, blog.User_id)
 
 	err := row.Scan(
@@ -157,9 +163,9 @@ func InsertBlog(blog Blog) (Blog, error) {
 
 func DeleteBlogById(id int) error {
 	_, err := DB.Exec(`
-		DELETE
-    FROM blogs
-    WHERE id = $1
+		DELETE FROM blogs
+    WHERE
+			id = $1
 	`, id)
 	return err
 }
@@ -169,8 +175,12 @@ func UpdateBlogById(blog Blog, id int) (Blog, error) {
 
 	row := DB.QueryRow(`
 		UPDATE blogs
-    SET title = $2, author = $3, url = $4, likes = $5
-    WHERE id = $1 RETURNING *
+    SET
+			title = $2, author = $3, url = $4, likes = $5
+    WHERE
+			id = $1
+		RETURNING
+			id, title, author, url, likes, user_id
 	`, id, blog.Title, blog.Author, blog.Url, blog.Likes)
 
 	err := row.Scan(

@@ -8,16 +8,18 @@ func GetUserById(id int) (User, error) {
 	user := User{}
 
 	row := DB.QueryRow(`
-		SELECT  *
+		SELECT
+			id, name, username, password
     FROM users
-    WHERE id = $1
+    WHERE
+			id = $1
 	`, id)
 
 	err := row.Scan(
 		&user.Id,
 		&user.Name,
-		&user.Password,
 		&user.Username,
+		&user.Password,
 	)
 	return user, err
 }
@@ -26,16 +28,18 @@ func GetUserByUsername(username string) (User, error) {
 	user := User{}
 
 	row := DB.QueryRow(`
-    SELECT  *
+    SELECT 
+			id, name, username, password
     FROM users
-    WHERE username = $1
+    WHERE
+			username = $1
 	`, username)
 
 	err := row.Scan(
 		&user.Id,
 		&user.Name,
-		&user.Password,
 		&user.Username,
+		&user.Password,
 	)
 	return user, err
 }
@@ -45,7 +49,7 @@ func GetAllUsers() ([]User, error) {
 
 	rows, err := DB.Query(`
     SELECT
-    id, username, name
+    	id, name, username
     FROM users
 	`)
 	if err != nil {
@@ -56,8 +60,8 @@ func GetAllUsers() ([]User, error) {
 		user := User{}
 		err := rows.Scan(
 			&user.Id,
-			&user.Username,
 			&user.Name,
+			&user.Username,
 		)
 		if err != nil {
 			return nil, err
@@ -73,18 +77,18 @@ func InsertUser(user User) (User, error) {
 
 	row := DB.QueryRow(`
 		INSERT INTO users
-		(username, name, password)
+			(name, username, password)
 		VALUES
-		($1, $2, $3)
-		RETURNING *
-	`, user.Username, user.Name, user.Password)
+			($1, $2, $3)
+		RETURNING
+			id, name, username, password
+	`, user.Name, user.Username, user.Password)
 
 	err := row.Scan(
 		&savedUser.Id,
-		&savedUser.Username,
 		&savedUser.Name,
+		&savedUser.Username,
 		&savedUser.Password,
 	)
-	savedUser.Password = ""
 	return savedUser, err
 }
