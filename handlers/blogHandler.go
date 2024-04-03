@@ -13,9 +13,8 @@ import (
 
 type Blog = models.Blog
 
-// TODO: also return its user
-func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
-	blogs, err := db.GetAllBlogs()
+func GetAllBlogsWithUsers(w http.ResponseWriter, r *http.Request) {
+	blogs, err := db.GetAllBlogsWithUsers()
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -24,15 +23,14 @@ func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(blogs)
 }
 
-// TODO: also return its user
-func GetOneBlog(w http.ResponseWriter, r *http.Request) {
+func GetOneBlogWithUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 0 {
 		http.Error(w, "Malformatted id", 400)
 		return
 	}
 
-	blog, err := db.GetBlogById(id)
+	blog, err := db.GetBlogWithUserById(id)
 	if err == sql.ErrNoRows {
 		message := fmt.Sprintf("Blog with id %v was not found", id)
 		http.Error(w, message, 404)

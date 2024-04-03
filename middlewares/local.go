@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Verifies token and extracts user by the token into "User" field of r.Context()
 func UserExtractor(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		tokenString := r.Header.Get("Authorization")

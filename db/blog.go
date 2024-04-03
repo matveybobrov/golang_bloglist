@@ -5,6 +5,7 @@ import (
 )
 
 type Blog = models.Blog
+type BlogWithUser = models.BlogWithUser
 
 func GetAllBlogs() ([]Blog, error) {
 	blogs := []Blog{}
@@ -15,6 +16,7 @@ func GetAllBlogs() ([]Blog, error) {
 
 	for rows.Next() {
 		blog := Blog{}
+		// Scan should match the db schema fields order
 		err := rows.Scan(
 			&blog.Id,
 			&blog.Title,
@@ -32,6 +34,42 @@ func GetAllBlogs() ([]Blog, error) {
 	return blogs, nil
 }
 
+func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
+	blogs := []BlogWithUser{}
+	rows, err := DB.Query("SELECT * FROM blogs JOIN users ON blogs.user_id=users.id")
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		blog := Blog{}
+		user := User{}
+		err := rows.Scan(
+			&blog.Id,
+			&blog.Title,
+			&blog.Author,
+			&blog.Url,
+			&blog.Likes,
+			&blog.User_id,
+
+			&user.Id,
+			&user.Name,
+			&user.Password,
+			&user.Username,
+		)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = ""
+		blogs = append(blogs, BlogWithUser{
+			Blog: blog,
+			User: user,
+		})
+	}
+
+	return blogs, nil
+}
+
 func GetBlogById(id int) (Blog, error) {
 	blog := Blog{}
 	row := DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
@@ -43,6 +81,29 @@ func GetBlogById(id int) (Blog, error) {
 		&blog.Likes,
 		&blog.User_id,
 	)
+	if err != nil {
+		return blog, err
+	}
+	return blog, nil
+}
+
+func GetBlogWithUserById(id int) (BlogWithUser, error) {
+	blog := BlogWithUser{}
+	row := DB.QueryRow("SELECT * FROM blogs JOIN users ON blogs.user_id=users.id WHERE blogs.id=$1", id)
+	err := row.Scan(
+		&blog.Id,
+		&blog.Author,
+		&blog.Url,
+		&blog.Title,
+		&blog.Likes,
+		&blog.User_id,
+
+		&blog.User.Id,
+		&blog.User.Name,
+		&blog.User.Password,
+		&blog.User.Username,
+	)
+	blog.User.Password = ""
 	if err != nil {
 		return blog, err
 	}

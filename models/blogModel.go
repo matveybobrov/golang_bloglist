@@ -6,5 +6,10 @@ type Blog struct {
 	Author  string `json:"author"`
 	Url     string `json:"url"`
 	Likes   int    `json:"likes"`
-	User_id int    `json:"user_id"`
+	User_id int    `json:"-"`
+}
+
+type BlogWithUser struct {
+	Blog
+	User User `json:"user"`
 }

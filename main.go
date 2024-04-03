@@ -23,7 +23,6 @@ func init() {
 	log.Println("Connected to database")
 }
 
-// TODO: return user with blog
 // TODO: make centrilized error handler
 // TODO: generate swagger docs
 func main() {
@@ -32,8 +31,8 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
-	mux.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)
+	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogsWithUsers)
+	mux.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlogWithUser)
 	mux.HandleFunc("POST /api/blogs", UserExtractor(handlers.CreateOneBlog))
 	mux.HandleFunc("DELETE /api/blogs/{id}", UserExtractor(handlers.DeleteOneBlog))
 	mux.HandleFunc("PUT /api/blogs/{id}", UserExtractor(handlers.UpdateOneBlog))
