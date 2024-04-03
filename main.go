@@ -25,10 +25,12 @@ func init() {
 }
 
 // TODO: consider sqlx
+// TODO: consider adding comments
 // TODO: change db columns order (esp. for users)
 // TODO: work with queries
-// TODO: make centrilized error handler
+// TODO: consider making centrilized error handler
 // TODO: generate swagger docs
+// TODO: maybe create blog, user folders inside of handlers and create GET/POST/... folders there
 func main() {
 	Logger := middlewares.Logger
 	UserExtractor := middlewares.UserExtractor
