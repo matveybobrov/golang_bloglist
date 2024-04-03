@@ -9,7 +9,11 @@ type BlogWithUser = models.BlogWithUser
 
 func GetAllBlogs() ([]Blog, error) {
 	blogs := []Blog{}
-	rows, err := DB.Query("SELECT * FROM blogs")
+
+	rows, err := DB.Query(`
+		SELECT  *
+    FROM blogs
+	`)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +40,13 @@ func GetAllBlogs() ([]Blog, error) {
 
 func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 	blogs := []BlogWithUser{}
-	rows, err := DB.Query("SELECT * FROM blogs JOIN users ON blogs.user_id=users.id")
+
+	rows, err := DB.Query(`
+		SELECT  *
+    FROM blogs
+    JOIN users
+      ON blogs.user_id = users.id
+	`)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +78,13 @@ func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 
 func GetBlogById(id int) (Blog, error) {
 	blog := Blog{}
-	row := DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
+
+	row := DB.QueryRow(`
+		SELECT  *
+    FROM blogs
+    WHERE id = $1 
+	`, id)
+
 	err := row.Scan(
 		&blog.Id,
 		&blog.Author,
@@ -85,7 +101,15 @@ func GetBlogById(id int) (Blog, error) {
 
 func GetBlogWithUserById(id int) (BlogWithUser, error) {
 	blog := BlogWithUser{}
-	row := DB.QueryRow("SELECT * FROM blogs JOIN users ON blogs.user_id=users.id WHERE blogs.id=$1", id)
+
+	row := DB.QueryRow(`
+		SELECT  *
+    FROM blogs
+    JOIN users
+      ON blogs.user_id = users.id
+    WHERE blogs.id = $1
+	`, id)
+
 	err := row.Scan(
 		&blog.Id,
 		&blog.Author,
@@ -108,12 +132,15 @@ func GetBlogWithUserById(id int) (BlogWithUser, error) {
 
 func InsertBlog(blog Blog) (Blog, error) {
 	savedBlog := Blog{}
-	row := DB.QueryRow("INSERT INTO blogs (title, author, url, user_id) VALUES ($1, $2, $3, $4) RETURNING *",
-		blog.Title,
-		blog.Author,
-		blog.Url,
-		blog.User_id,
-	)
+
+	row := DB.QueryRow(`
+		INSERT INTO blogs
+		(title, author, url, user_id)
+		VALUES
+		($1, $2, $3, $4)
+		RETURNING *
+	`, blog.Title, blog.Author, blog.Url, blog.User_id)
+
 	err := row.Scan(
 		&savedBlog.Id,
 		&savedBlog.Title,
@@ -129,14 +156,31 @@ func InsertBlog(blog Blog) (Blog, error) {
 }
 
 func DeleteBlogById(id int) error {
-	_, err := DB.Exec("DELETE FROM blogs WHERE id=$1", id)
+	_, err := DB.Exec(`
+		DELETE
+    FROM blogs
+    WHERE id = $1
+	`, id)
 	return err
 }
 
 func UpdateBlogById(blog Blog, id int) (Blog, error) {
 	updatedBlog := Blog{}
-	row := DB.QueryRow("UPDATE blogs SET title=$2, author=$3, url=$4, likes=$5 WHERE id=$1 RETURNING *", id, blog.Title, blog.Author, blog.Url, blog.Likes)
-	err := row.Scan(&updatedBlog.Id, &updatedBlog.Title, &updatedBlog.Author, &updatedBlog.Url, &updatedBlog.Likes, &updatedBlog.User_id)
+
+	row := DB.QueryRow(`
+		UPDATE blogs
+    SET title = $2, author = $3, url = $4, likes = $5
+    WHERE id = $1 RETURNING *
+	`, id, blog.Title, blog.Author, blog.Url, blog.Likes)
+
+	err := row.Scan(
+		&updatedBlog.Id,
+		&updatedBlog.Title,
+		&updatedBlog.Author,
+		&updatedBlog.Url,
+		&updatedBlog.Likes,
+		&updatedBlog.User_id,
+	)
 	if err != nil {
 		return updatedBlog, err
 	}

@@ -24,6 +24,7 @@ func init() {
 }
 
 // TODO: consider sqlx
+// TODO: change db columns order (esp. for users)
 // TODO: work with queries
 // TODO: make centrilized error handler
 // TODO: generate swagger docs
@@ -40,6 +41,7 @@ func main() {
 	mux.HandleFunc("PUT /api/blogs/{id}", UserExtractor(handlers.UpdateOneBlog))
 
 	mux.HandleFunc("GET /api/users", handlers.GetAllUsers)
+	mux.HandleFunc("GET /api/users/{id}", handlers.GetOneUser)
 	mux.HandleFunc("POST /api/register", handlers.RegisterUser)
 	mux.HandleFunc("POST /api/login", handlers.LoginUser)
 

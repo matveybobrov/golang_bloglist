@@ -5,9 +5,11 @@ import (
 	"bloglist/helpers"
 	"bloglist/models"
 	"bloglist/validators"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 type User = models.User
@@ -21,6 +23,28 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(users)
+}
+
+func GetOneUser(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil || id < 0 {
+		http.Error(w, "Malformatted id", 400)
+		return
+	}
+
+	user, err := db.GetUserById(id)
+	if err == sql.ErrNoRows {
+		message := fmt.Sprintf("User with id %v was not found", id)
+		http.Error(w, message, 404)
+		return
+	}
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	user.Password = ""
+
+	json.NewEncoder(w).Encode(user)
 }
 
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
