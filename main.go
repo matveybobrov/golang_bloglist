@@ -23,17 +23,16 @@ func init() {
 }
 
 // TODO: make username unique
-// TODO: make creating blogs with token and a user assigned by token
+// TODO: make creating blogs with token and make a user assigned by token
 // TODO: make centrilized error handler
-// TODO: make authorization middleware
 // TODO: generate swagger docs
 func main() {
 	Logger := middlewares.Logger
-	UserExtractor := middlewares.UserExtractor
+	//UserExtractor := middlewares.UserExtractor
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /api/blogs", UserExtractor(handlers.GetAllBlogs))
+	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
 	mux.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)
 	mux.HandleFunc("POST /api/blogs", handlers.CreateOneBlog)
 	mux.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)

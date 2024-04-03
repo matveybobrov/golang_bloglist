@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS blogs (
   title TEXT NOT NULL,
   likes INTEGER DEFAULT 0,
   -- Define one-to-many relationship between user and blogs
+  -- Could be NULL. That means that the user was deleted
   user_id INTEGER REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 

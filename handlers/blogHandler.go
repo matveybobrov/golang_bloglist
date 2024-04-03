@@ -13,6 +13,7 @@ import (
 
 type Blog = models.Blog
 
+// TODO: also return its user
 func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
 	blogs, err := db.GetAllBlogs()
 	if err != nil {
@@ -23,6 +24,7 @@ func GetAllBlogs(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(blogs)
 }
 
+// TODO: also return its user
 func GetOneBlog(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 0 {
@@ -44,6 +46,7 @@ func GetOneBlog(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(blog)
 }
 
+// TODO: link author from token to created blog
 func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 	blog := Blog{}
 	json.NewDecoder(r.Body).Decode(&blog)
@@ -53,6 +56,8 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, 400)
 		return
 	}
+
+	// TODO: take from token
 	blog.User_id = 3
 
 	savedBlog, err := db.InsertBlog(blog)
@@ -65,6 +70,7 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(savedBlog)
 }
 
+// TODO: make it possible only by its creator verified by token
 func DeleteOneBlog(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 0 {
@@ -81,6 +87,7 @@ func DeleteOneBlog(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(204)
 }
 
+// TODO: make it possible only by its creator verified by token
 func UpdateOneBlog(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 0 {

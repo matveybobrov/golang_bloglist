@@ -22,8 +22,8 @@ func UserExtractor(h http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		//TODO: maybe check if user exists in database
-
+		// TODO: maybe check if user exists in database
+		// TODO: set a proper key
 		ctxWithUser := context.WithValue(r.Context(), "User", user)
 		r = r.WithContext(ctxWithUser)
 

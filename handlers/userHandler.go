@@ -61,20 +61,6 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginUser(w http.ResponseWriter, r *http.Request) {
-	/*
-		tokenString := r.Header.Get("Authorization")
-		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
-			http.Error(w, "Missing authorization header", http.StatusUnauthorized)
-			return
-		}
-
-		tokenString = tokenString[len("Bearer "):]
-		user, err := helpers.ParseToken(tokenString)
-		if err != nil {
-			http.Error(w, "Invalid token", http.StatusUnauthorized)
-			return
-		}
-	*/
 	user := User{}
 	json.NewDecoder(r.Body).Decode(&user)
 
@@ -96,6 +82,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Hide password from response
 	foundUser.Password = ""
 	response := UserWithToken{
 		User:  foundUser,
