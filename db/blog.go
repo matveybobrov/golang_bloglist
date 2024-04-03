@@ -16,7 +16,14 @@ func GetAllBlogs() ([]Blog, error) {
 
 	for rows.Next() {
 		blog := Blog{}
-		err := rows.Scan(&blog.Id, &blog.Title, &blog.Author, &blog.Url, &blog.Likes)
+		err := rows.Scan(
+			&blog.Id,
+			&blog.Title,
+			&blog.Author,
+			&blog.Url,
+			&blog.Likes,
+			&blog.User_id,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -29,7 +36,14 @@ func GetAllBlogs() ([]Blog, error) {
 func GetBlogById(id int) (Blog, error) {
 	blog := Blog{}
 	row := DB.QueryRow("SELECT * FROM blogs WHERE id=$1", id)
-	err := row.Scan(&blog.Id, &blog.Author, &blog.Url, &blog.Title, &blog.Likes)
+	err := row.Scan(
+		&blog.Id,
+		&blog.Author,
+		&blog.Url,
+		&blog.Title,
+		&blog.Likes,
+		&blog.User_id,
+	)
 	if err == sql.ErrNoRows {
 		return blog, err
 	}
@@ -41,8 +55,20 @@ func GetBlogById(id int) (Blog, error) {
 
 func InsertBlog(blog Blog) (Blog, error) {
 	savedBlog := Blog{}
-	row := DB.QueryRow("INSERT INTO blogs (title, author, url) VALUES ($1, $2, $3) RETURNING *", blog.Title, blog.Author, blog.Url)
-	err := row.Scan(&savedBlog.Id, &savedBlog.Title, &savedBlog.Author, &savedBlog.Url, &savedBlog.Likes)
+	row := DB.QueryRow("INSERT INTO blogs (title, author, url, user_id) VALUES ($1, $2, $3, $4) RETURNING *",
+		blog.Title,
+		blog.Author,
+		blog.Url,
+		blog.User_id,
+	)
+	err := row.Scan(
+		&savedBlog.Id,
+		&savedBlog.Title,
+		&savedBlog.Author,
+		&savedBlog.Url,
+		&savedBlog.Likes,
+		&savedBlog.User_id,
+	)
 	if err != nil {
 		return savedBlog, err
 	}

@@ -22,6 +22,8 @@ func init() {
 	log.Println("Connected to database")
 }
 
+// TODO: make username unique
+// TODO: make creating blogs with token and a user assigned by token
 // TODO: make centrilized error handler
 // TODO: make authorization middleware
 // TODO: generate swagger docs

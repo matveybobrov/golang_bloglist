@@ -53,6 +53,7 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, msg, 400)
 		return
 	}
+	blog.User_id = 3
 
 	savedBlog, err := db.InsertBlog(blog)
 	if err != nil {
