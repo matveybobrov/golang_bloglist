@@ -29,10 +29,11 @@ func init() {
 // TODO: generate swagger docs
 func main() {
 	Logger := middlewares.Logger
+	UserExtractor := middlewares.UserExtractor
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogs)
+	mux.HandleFunc("GET /api/blogs", UserExtractor(handlers.GetAllBlogs))
 	mux.HandleFunc("GET /api/blogs/{id}", handlers.GetOneBlog)
 	mux.HandleFunc("POST /api/blogs", handlers.CreateOneBlog)
 	mux.HandleFunc("DELETE /api/blogs/{id}", handlers.DeleteOneBlog)

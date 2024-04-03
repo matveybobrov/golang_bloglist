@@ -90,7 +90,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := helpers.SignToken(user)
+	token, err := helpers.SignToken(foundUser)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
