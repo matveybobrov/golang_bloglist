@@ -10,6 +10,9 @@ type BlogWithUser = models.BlogWithUser
 func GetAllBlogs() ([]Blog, error) {
 	blogs := []Blog{}
 
+	// I don't use SELECT * because it makes Scanning rows harder because of unclear arguments order
+	// same with RETURNING *
+	// I also use raw string literals with bactics because it allows to break lines and highlight sql
 	rows, err := DB.Query(`
 		SELECT
 			id, title, author, url, likes, user_id

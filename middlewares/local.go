@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+// Local middlewares are route specific and use http.HandlerFunc as an argument
+
 // Verifies token and extracts user by the token into "User" field of r.Context()
 func UserExtractor(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

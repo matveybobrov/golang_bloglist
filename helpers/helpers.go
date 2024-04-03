@@ -22,7 +22,7 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 func SignToken(user User) (string, error) {
-	// create token with some data (map)
+	// create token with some data in it (map)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":       user.Id,
 		"username": user.Username,
@@ -45,6 +45,7 @@ func ParseToken(token string) (User, error) {
 		return user, err
 	}
 
+	// use type assertions because of the interface{}
 	claims, _ := parsedToken.Claims.(jwt.MapClaims)
 	user.Id = int(claims["id"].(float64))
 	user.Username = claims["username"].(string)

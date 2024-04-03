@@ -15,6 +15,7 @@ func init() {
 	// TODO: maybe handle an error
 	godotenv.Load()
 
+	// log also prints date unlike fmt
 	log.Println("Connecting to database...")
 	err := db.Init()
 	if err != nil {
@@ -32,6 +33,7 @@ func main() {
 	Logger := middlewares.Logger
 	UserExtractor := middlewares.UserExtractor
 
+	// I had to create it in order to use global Logger
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /api/blogs", handlers.GetAllBlogsWithUsers)
