@@ -24,6 +24,7 @@ func init() {
 	log.Println("Connected to database")
 }
 
+// TODO: handle all possible errors (json)
 // TODO: consider sqlx
 // TODO: consider adding comments
 // TODO: change db columns order (esp. for users)

@@ -2,6 +2,7 @@ package db
 
 import (
 	"bloglist/models"
+	"fmt"
 )
 
 type Blog = models.Blog
@@ -36,6 +37,47 @@ func GetAllBlogs() ([]Blog, error) {
 		if err != nil {
 			return nil, err
 		}
+		blogs = append(blogs, blog)
+	}
+
+	return blogs, nil
+}
+
+func GetAllBlogsWithSearch(searchFilter string) ([]BlogWithUser, error) {
+	blogs := []BlogWithUser{}
+	searchFilter = fmt.Sprintf("%%%v%%", searchFilter)
+
+	rows, err := DB.Query(`
+		SELECT
+			blogs.id, title, author, url, likes, user_id, users.id, name, username, password
+    FROM blogs
+    JOIN users
+      ON blogs.user_id = users.id
+		WHERE title ILIKE $1 OR author ILIKE $1
+	`, searchFilter)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		blog := BlogWithUser{}
+		err := rows.Scan(
+			&blog.Id,
+			&blog.Title,
+			&blog.Author,
+			&blog.Url,
+			&blog.Likes,
+			&blog.User_id,
+
+			&blog.User.Id,
+			&blog.User.Name,
+			&blog.User.Username,
+			&blog.User.Password,
+		)
+		if err != nil {
+			return nil, err
+		}
+		blog.User.Password = ""
 		blogs = append(blogs, blog)
 	}
 

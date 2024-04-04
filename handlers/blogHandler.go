@@ -12,11 +12,25 @@ import (
 )
 
 type Blog = models.Blog
+type BlogWithUser = models.BlogWithUser
 
 func GetAllBlogsWithUsers(w http.ResponseWriter, r *http.Request) {
-	blogs, err := db.GetAllBlogsWithUsers()
+	var blogs []BlogWithUser
+	var err error
+
+	queryParams := r.URL.Query()
+	searchParam := queryParams.Get("search")
+	if searchParam != "" {
+		blogs, err = db.GetAllBlogsWithSearch(searchParam)
+	} else {
+		blogs, err = db.GetAllBlogsWithUsers()
+	}
 	if err != nil {
 		http.Error(w, err.Error(), 500)
+		return
+	}
+	if len(blogs) == 0 {
+		http.Error(w, "No blogs found", 404)
 		return
 	}
 
