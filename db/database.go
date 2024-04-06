@@ -11,12 +11,12 @@ var DB *sql.DB
 
 func CreateDatabase() (*sql.DB, error) {
 	dbURL := os.Getenv("DATABASE_URL")
-	// somehow doesn't return an error if url is incorrect
+	// err returned only if dbURL is not well-formed
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, err
 	}
-	// will return an error if url is incorrect
+	// check if the connection established
 	if err = db.Ping(); err != nil {
 		return nil, err
 	}

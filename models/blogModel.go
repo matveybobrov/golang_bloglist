@@ -9,7 +9,7 @@ type Blog struct {
 	Likes  int    `json:"likes" db:"likes"`
 	// exclude this field completely from json because of user population
 	// it will be completely ommited on marshall and unmarshall
-	User_id int `json:"-" db:"user_id"`
+	UserId int `json:"-" db:"user_id"`
 }
 
 // all fields from Blog will be embedded into this type

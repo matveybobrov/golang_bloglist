@@ -93,7 +93,7 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 
 	foundUser, err := db.GetUserByUsername(user.Username)
 	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
+		http.Error(w, "Incorrect password or username", http.StatusUnauthorized)
 		return
 	}
 

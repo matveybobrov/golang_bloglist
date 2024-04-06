@@ -70,7 +70,7 @@ func CreateOneBlog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := r.Context().Value("User").(User)
-	blog.User_id = user.Id
+	blog.UserId = user.Id
 
 	savedBlog, err := db.InsertBlog(blog)
 	if err != nil {
@@ -101,7 +101,7 @@ func DeleteOneBlog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := r.Context().Value("User").(User)
-	if user.Id != foundBlog.User_id {
+	if user.Id != foundBlog.UserId {
 		http.Error(w, "Not the creator of the blog", http.StatusForbidden)
 		return
 	}
@@ -143,7 +143,7 @@ func UpdateOneBlog(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := r.Context().Value("User").(User)
-	if user.Id != foundBlog.User_id {
+	if user.Id != foundBlog.UserId {
 		http.Error(w, "Not the creator of the blog", http.StatusForbidden)
 		return
 	}

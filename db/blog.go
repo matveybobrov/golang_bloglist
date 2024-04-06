@@ -32,7 +32,7 @@ func GetAllBlogs() ([]Blog, error) {
 			&blog.Author,
 			&blog.Url,
 			&blog.Likes,
-			&blog.User_id,
+			&blog.UserId,
 		)
 		if err != nil {
 			return nil, err
@@ -67,7 +67,7 @@ func GetAllBlogsWithSearch(searchFilter string) ([]BlogWithUser, error) {
 			&blog.Author,
 			&blog.Url,
 			&blog.Likes,
-			&blog.User_id,
+			&blog.UserId,
 
 			&blog.User.Id,
 			&blog.User.Name,
@@ -106,7 +106,7 @@ func GetAllBlogsWithUsers() ([]BlogWithUser, error) {
 			&blog.Author,
 			&blog.Url,
 			&blog.Likes,
-			&blog.User_id,
+			&blog.UserId,
 
 			&blog.User.Id,
 			&blog.User.Name,
@@ -140,7 +140,7 @@ func GetBlogById(id int) (Blog, error) {
 		&blog.Author,
 		&blog.Url,
 		&blog.Likes,
-		&blog.User_id,
+		&blog.UserId,
 	)
 	if err != nil {
 		return blog, err
@@ -167,7 +167,7 @@ func GetBlogWithUserById(id int) (BlogWithUser, error) {
 		&blog.Author,
 		&blog.Url,
 		&blog.Likes,
-		&blog.User_id,
+		&blog.UserId,
 
 		&blog.User.Id,
 		&blog.User.Name,
@@ -190,7 +190,7 @@ func InsertBlog(blog Blog) (Blog, error) {
 			($1, $2, $3, $4)
 		RETURNING
 			id, title, author, url, likes, user_id
-	`, blog.Title, blog.Author, blog.Url, blog.User_id)
+	`, blog.Title, blog.Author, blog.Url, blog.UserId)
 
 	err := row.Scan(
 		&savedBlog.Id,
@@ -198,7 +198,7 @@ func InsertBlog(blog Blog) (Blog, error) {
 		&savedBlog.Author,
 		&savedBlog.Url,
 		&savedBlog.Likes,
-		&savedBlog.User_id,
+		&savedBlog.UserId,
 	)
 	if err != nil {
 		return savedBlog, err
@@ -234,7 +234,7 @@ func UpdateBlogById(blog Blog, id int) (Blog, error) {
 		&updatedBlog.Author,
 		&updatedBlog.Url,
 		&updatedBlog.Likes,
-		&updatedBlog.User_id,
+		&updatedBlog.UserId,
 	)
 	if err != nil {
 		return updatedBlog, err
